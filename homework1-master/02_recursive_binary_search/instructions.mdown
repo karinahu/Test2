@@ -1,0 +1,29 @@
+Recursive Binary Search
+=======================
+
+A *recursive function* is a function that can call itself.
+It consists of
+
+1. one or more *base cases*, where the function returns a certain value, and
+1. one or more *iteration cases*, where the function calls itself.
+
+This folder contains a recursive implementation of linear search, with an explanation of what the base case and the iteration case are.
+
+1. Go through the linear code and make sure you understand it.
+   I suggest you add `print` statements and then run the code so that you can see when the function encounters an iteration case and when it hits a base case.
+
+1. Implement binary search with a recursive function.
+   A file with skeleton code is already provided for you.
+
+1. Document your function with a docstring.
+   Follow the format in the lecture notes, which is modeled after [numpy's docstring conventions](https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt#docstring-standard).
+
+1. The file with your binary search function already includes a function for testing that `binary_search` works correctly.
+   - In order to do so, you must have `pytest` installed.
+     How to do this varies between operating systems.
+     If possible, I suggest that you use our Virtual Machine (VM), which already comes with `pytest` installed.
+     There it is available as the command `pytest-3`.
+   - Open a terminal and use the `cd` command to go to the folder that contains the file.
+     Then run `pytest` against the file.
+     In the VM, the command is `pytest-3 binary_search_recursive.py`.
+     If you don't get any errors, your function is working correctly.

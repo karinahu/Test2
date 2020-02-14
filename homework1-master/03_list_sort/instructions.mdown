@@ -1,0 +1,16 @@
+Selection Sort Algorithm
+========================
+
+Remember that binary search only works correctly with sorted lists.
+In Python we can use the `sorted()` function to sort the list to be searched, but how exactly does this function work?
+Cormen's *Algorithm Unlocked* (see the readings repository) discusses a particularly simple sorting algorithm called selection sort on pages 32--35 (47--50 of the PDF).
+
+1. Implement selection sort in Python!
+   A barebones file has already been added to this folder for your convenience.
+
+1. Document your function with a docstring.
+   Follow the format in the lectures, which is modeled after [numpy's docstring conventions](https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt#docstring-standard).
+
+1. When implementing a function, you want to know that it is correct.
+   Write a simple function that takes an arbitrary list `xs` as its argument and returns `True` iff `selection_sort(xs) == sorted(xs)`.
+   Then use this function to test your implementation of `selection_sort` on several lists (include these lists in your code).

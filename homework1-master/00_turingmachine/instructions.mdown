@@ -1,0 +1,10 @@
+Turing Machine
+==============
+
+- Consider once more the Turing machine from unit 1 of the lecture notes.
+- Analogous to example 1.1, show how this Turing machine operates on an input of the form 000000000111100000, with the read-write head starting on the rightmost 1 in state A.
+
+Your answer
+-----------
+
+

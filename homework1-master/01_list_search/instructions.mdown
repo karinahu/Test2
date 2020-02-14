@@ -1,0 +1,35 @@
+Measuring Algorithm Speed
+=========================
+
+In the lecture notes I claim that binary search is often faster than linear search, but not always.
+We will try to verify the claim in this exercise.
+(You can put your answers right beneath the questions in this file.)
+
+- This folder contains implementations of linear search and binary search.
+- These functions are automatically loaded by `test.py` when you run it interactively.
+  In the VM, this can be accomplished as follows:
+  1. open a terminal,
+  1. use the `cd` command to move to the folder that contains `test.py`
+  1. run `python3 -i test.py`; alternatively, you can use `bpython3 -i test.py` if you prefer *bpython* over the standard Python shell
+- Once `test.py` is loaded, you can use `run_tests()` to start a test battery.
+  Python will:
+
+  1. create random lists of increasing length,
+  1. run linear search and binary search on them looking for a random item,
+  1. measure how long it takes for each function to complete.
+
+- Execute `run_tests()` and look at the results.
+  Do they confirm what we said in the lecture?
+
+- Open `tests.py` and add a function `random_sorted_list` that generates a random list that is already sorted.
+  Also modify `time_search_algorithm` such that the argument of `binary_search` is not sorted if it was generated with `random_sorted_list` instead of `random_list`.
+
+- Now rerun `run_tests` with `random_sorted_list` as the generator instead of `random_list`.
+  Have the results changed?
+  Why?
+  What does this tell us about the overall usefulness of binary search compared to linear search in real-world applications?
+
+**A note on scientific notation**:
+Python represents very small numbers in scientific notation with `e` at the end.
+An expression like `4e-05` is shorthand for *4 multiplied with (10 to the power of -5)*, which is the same as *4 divided by (10 to the power of 5)*.
+So `8e-05` is smaller than `0.2e-04` even though `8` is larger than `0.2`, and `2.568e-05` is much, much smaller than `0.00931`.

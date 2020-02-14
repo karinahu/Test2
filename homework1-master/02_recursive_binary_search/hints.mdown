@@ -1,0 +1,71 @@
+Hints
+=====
+
+General approach
+----------------
+
+Binary search as defined in the lecture notes is already recursive:
+
+1.  Binary search is given a list and a search item as an argument.
+1.  If the list is empty, we return `False` since an empty list cannot contain any items.
+1.  Otherwise, we check whether the middle of the list is the search item.
+    - If so, it returns `True`.
+    - Otherwise, it checks whether item in the middle position must be to the left or to the right of the search item.
+1.  If the middle item must be to the left of the search item, run binary search on the right half of the list.
+    Otherwise run it on the left half of the list.
+
+Here is an intuitive example of how the recursion works in practice:
+
+```
+binary_search(["a", "c", "e", "g", "h"], "f")
+    1. middle point: e
+    2. e < f -> check right half
+    3. return the output of binary_search(["g", "h"], "f")
+        3.1 middle point: h
+        3.2 h > f -> check left half
+        3.3 return the output of binary_search(["g"], "f")
+            3.3.1 middle point: g
+            3.3.2 g > f -> check left half
+            3.3.3 return the output of binary_search([], "f")
+                3.3.3.1 the list is empty
+                3.3.3.2 return False
+            3.3.4 return False
+        3.4 return False
+    4. return False
+```
+
+An implementation detail
+------------------------
+
+The description above assumes that binary search only takes two arguments, the list and the search item.
+But this means that each recursive call of binary search must be passed a new list (the left or right half of the previous list).
+An alternative implementation would instead keep the search list the same but add two parameters `start` and `end` that specify which subpart of the list binary search should be applied to.
+Here is what the example above would look like in this case.
+
+```
+binary_search(["a", "c", "e", "g", "h"], "f", start=0, end=5)
+    1. middle point: e
+    2. e < f -> check right half
+    3. return the output of binary_search(["a", "c", "e", "g", "h"], "f", start=3, end=5)
+        3.1 middle point: h
+        3.2 h > f -> check left half
+        3.3 return the output of binary_search(["a", "c", "e", "g", "h"], "f", start=4, end=5)
+            3.3.1 middle point: g
+            3.3.2 g > f -> check left half
+            3.3.3 return the output of binary_search(["a", "c", "e", "g", "h"], "f", start=4, end=4)
+                3.3.3.1 start == end
+                3.3.3.2 return False
+            3.3.4 return False
+        3.4 return False
+    4. return False
+```
+
+The solution with `start` and `end` is more memory efficient because we never manipulate the list or create new lists from it.
+In the first example, four different lists are held in memory:
+
+1. `["a", "c", "e", "g", "h"]`,
+1. `["g", "h"]`,
+1. `["g"]`,
+1. `[]`.
+
+In the second one, only the very first list is used.

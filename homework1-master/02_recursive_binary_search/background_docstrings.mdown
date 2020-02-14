@@ -1,0 +1,146 @@
+Docstrings
+==========
+
+Why docstrings?
+---------------
+
+Docstrings are an essential part of code documentation in Python.
+They serve many different purposes:
+
+1.  Whoever reads your code immediately knows what the function is for, what it can do, and how it is used.
+1.  A good text editor will use docstrings to suggest autocompletions as you type your code.
+1.  Docstrings can be used for rudimentary testing of the code with `pytest`.
+1.  Docstrings can be automatically included in online documentation for your code.
+1.  If somebody is using your code in an interactive Python shell, the docstring can be used to display documentation on the fly.
+    You can test that for yourself in the VM:
+    1. Open a terminal and start the bpython shell will `bpython3`.
+    1. Type `"bla".` and wait.
+       Do not hit enter.
+    1. As soon as you type the `.`, a box opens below with all kinds of entries.
+       Each entry is a string method that can be applied to `"bla"`.
+    1. Continue typing `sp`, then hit Tab to automatically complete the entry to `split`.
+       Notice how the list of entries is truncated to just two.
+    1. The line on your screen should now read `"bla".split`.
+       Add a single `(` right at the end.
+       The box below the line will change.
+       It now shows you additional information on the `split` method.
+       All this information is created from the docstring for `split`.
+
+General docstring format
+------------------------
+
+A good docstring consists of a variety of components:
+
+1. A one line description of what the function does.
+1. A paragraph that provides more detailed information.
+1. An overview of the function arguments.
+1. A description of what the function returns.
+1. Examples of how the function is to be used.
+
+You do not need to always specify all these components.
+Very simple functions can do with a one line description, and arguments and return values can be omitted if they are obvious.
+
+Examples are a special case: If you use a testing framework like *hypothesis* to verify the correctness of your code, docstring examples only help the user figure out how to use the function.
+For simple functions, no examples may be needed.
+But there are also testing paradigms where docstring examples are used as test cases.
+For example, suppose the docstring contains the passage below:
+
+```python
+>>> linear_search(["a", "c", "e"], "d")
+False
+```
+
+Then these docstring-based testing format will run `linear_search(["a", "c", "e"], "d")` to check that the output is indeed `False`.
+If it is not, an error message is raised.
+If docstring examples are the only means by which you test your code, every function should have a docstring with examples.
+
+A concrete example
+------------------
+
+Look at the docstring for the `binary_search` function from another exercise:
+
+```python
+"""Perform binary search for item in search_list.
+
+This algorithm is more efficient than linear search,
+but only works for sorted lists!
+
+Parameters
+----------
+search_list : list
+    list to be searched
+item : any
+    item we are looking for
+
+Returns
+-------
+int or False
+
+Examples
+--------
+>>> binary_search([0,1,7,9], 7)
+2
+
+>>> binary_search([0,1,7,9], 8)
+False
+"""
+```
+
+As you can see it has a one-line introduction, a paragraph with additional information on binary search, a specification of the parameters, the possible return values, and two examples.
+You can use this as a template for your own docstrings.
+
+A few remarks:
+
+1. In the parameters, the entry `search_list : list` tells us that the argument `search_list` has the type `list`.
+   Note the spaces around `:`, these are required when using this format for specifying types.
+   However, you can also completely omit the type of arguments.
+
+1. The `any` type is used when there are no restrictions on the type.
+
+1. If the argument or return value can be one of multiple types, you can link them with `or`.
+
+1. Even if you do not specify the type of an argument, you should add an indented line with a brief description.
+
+1. In examples, it is customary to prefix code with `>>>`.
+   Lines without `>>>` represent the output of the code.
+
+1. Examples should be separated by an empty line.
+
+1. You can include descriptive prose between examples to explain how they work and what they do.
+
+Specifying argument types
+-------------------------
+
+As pointed out above, it is recommended to specify the type of each function argument.
+Is it a string, a list, a dictionary, a tuple, a set, an integer, a float, a boolean, or something completely different?
+Again this information clarifies how your code works and can be used for automatic verification of your code.
+
+You can find out the type of an argument with the `type()` function in a Python shell.
+
+```python
+>>> type(["a", "b"])
+<class 'list'>
+>>> type("a")
+<class 'str'>
+>>> type(True)
+<class 'bool'>
+>>> type(None)
+<class 'NoneType'>
+>>> type((5+i for i in range(10))
+<class 'generator'>
+```
+
+If you want, you can specify more fine-grained types.
+For example, you may distinguish between `list of str` for `["a", "b", "c"]` and `list of int` for `[1, 2, 3]`.
+There is no established standard for argument types in docstrings.
+However, the `typing` package has defined a rigorous syntax for type descriptions that is becoming more widespread in the community.
+We will encounter this package at a later point.
+
+Closing remark
+--------------
+
+Docstrings, like many things in programming, are a matter of good style.
+At the beginning, you'll have a hard time telling how detailed a docstring for a given function should be.
+But this will improve as you get more experience and can tell more easily how much information is needed to use the function efficiently.
+For the course, though, there is a simple principle: when in doubt, be verbose.
+This principle is already in place in some of the exercises - the docstring for linear search, for instance, is much more elaborate than it needs to be for such a simple and well-known algorithm.

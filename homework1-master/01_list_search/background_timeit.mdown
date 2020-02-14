@@ -1,0 +1,251 @@
+Measuring Python Performance with `timeit`
+==========================================
+
+Performance does not matter, unless it does
+-------------------------------------------
+
+When you write a program, you should **not** worry too much about performance during the initial stages of the coding process.
+The important thing at that stage is writing clear code that is well-documented, easy to maintain, and will be extensible in the future.
+This goes doubly so for Python: the language isn't exactly a speed demon to begin with, so performance optimizations can only take you so far.
+That said, if a program runs too slow for its intended usage purpose, you need to find a way to make it faster.
+And the first step in that process is figuring out which steps of the program take a long time.
+
+The right choice of algorithm and data structures can have a huge impact on performance.
+For example, sets and dictionaries allow for much faster retrieval of items compared to a list.
+When a list is sorted, binary search is faster than linear search.
+Or at least that's what the theory says.
+In practice, you'll want to measure the performance of your program to get some concrete results.
+
+The `timeit` package
+--------------------
+
+### Simplest case
+
+The `timeit` package provides an easy way of measuring how long certain computations take.
+The simplest usage scenario revolves around the function `timeit.default_timer()`, which ask the operating system for the current time.
+You can store this value in a variable, e.g. `start`:
+
+```python
+import timeit
+
+start = timeit.default_timer()
+```
+
+Put this line right before the code the performance of which you wish to measure.
+For example, you might have the following:
+
+```python
+import random
+improt timeit
+
+# function to be tested
+def multiply(n):
+    if n < 1:
+        return 0
+    number = 1
+    for n in range(1, n):
+        number *= n
+    return n
+
+# get start time
+start = timeit.default_timer()
+# run code
+n = random.randint(1, 10**4)
+```
+
+Immediately after the code, you again call `timeit.default_timer()` to get the current time.
+Subtracting `start` from this new value gives us the difference between the current time and the time before the code was run.
+This difference is the amount of milliseconds the code took to run.
+
+```python
+import random
+import timeit
+
+# function to be tested
+def multiply(n):
+    if n < 1:
+        return 0
+    number = 1
+    for n in range(1, n):
+        number *= n
+    return n
+
+# get start time
+start = timeit.default_timer()
+# run code
+n = random.randint(1, 10**4)
+print(n, multiply(n), timeit.default_timer() - start)
+```
+
+For the very simple measurements we take in this class, this approach is sufficient.
+However, it has two major downsides:
+
+1. You have to manually specify the measuring points.
+1. Unless you add a loop to take multiple measurements, only one measurement will be taken.
+   This makes the result somewhat unreliable - if your computer is temporarily busy with some other task, fewer resources will be available for Python and some of the code may run more slowly.
+
+To fix this, we have to make better use of the capabilities of `timeit`.
+
+### Advanced usage
+
+What we really want is to create a timer object that can carry out and store multiple measurements for us.
+This is done with the `timeit.repeat` function.
+But before we look at this, let's consider the simpler case of `timeit.timeit`.
+This function takes three arguments:
+
+- `stmt`: the code to be tested, as a single string
+- `setup`: the setup code as a single string; this is used to load any packages or definitions that are needed for the test code to run
+- `number`: how many executions of the test code should be part of a single measurement
+
+This may seem confusing, so let's look at a concrete example.
+
+```python
+import timeit
+
+# we need random for the test code to work
+mysetup = """import random"""
+
+# the test code runs multiply with a random integer between 0 and 10^4
+mycode = """
+def multiply(n):
+    if n < 1:
+        return 0
+    number = 1
+    for n in range(1, number):
+        number *= n
+    return n
+
+n = random.randint(0, 10**4)
+multiply(n)
+"""
+
+# how long does it take to run multiply 100 times?
+time = timeit.timeit(setup = mysetup,
+                     stmt = mycode,
+                     number = 100)
+print(time)
+```
+
+When you run the code above, `timeit` will tell you how long it took to run 100 instances of `multiply` with random integers.
+However, this code still runs the test battery only once.
+We could get more accurate results by running the battery multiple times and averaging the output.
+We can do this with `timeit.repeat`.
+It works exactly like `timeit.timeit`, but it also takes a `repeat` parameter
+
+- `repeat`: how many repetitions of the test battery should be run
+
+For example, if `timeit.repeat` is run with `repeat = 5`, it returns a list with 5 elements.
+Each elements shows how long it took to run one of the test batteries.
+This can be used to compute the average runtime.
+
+```python
+import timeit
+
+# we need random for the test code to work
+mysetup = """import random"""
+
+# the test code runs multiply with a random integer between 0 and 10^4
+mycode = """
+def multiply(n):
+    if n < 1:
+        return 0
+    number = 1
+    for n in range(1, number):
+        number *= n
+    return n
+
+n = random.randint(1, 10**4)
+multiply(n)
+"""
+
+# how long does it take to run multiply 100 times?
+times = timeit.repeat(setup = mysetup,
+                      stmt = mycode,
+                      number = 100,
+                      repeat = 3)
+
+# all values
+print(times)
+
+print("Average:", sum(times) / len(times))
+print("Fastest:", min(times))
+print("Slowest:", min(times))
+```
+
+### Trick: Importing from `__main__`
+
+The code above is still somewhat unsatisfying because we have to define the functions to be tested as part of the test code.
+That is not only inelegant, it also means that part of the measurement includes the time for defining the function.
+We want to factor the code so that the definition of the functions and the measurements we take of them are two entirely separate pieces of code.
+Here is how that is done:
+
+```python
+import timeit
+
+# function to be tested
+def multiply(n):
+    if n < 1:
+        return 0
+    number = 1
+    for n in range(1, n):
+        number *= n
+    return n
+
+# the measurement code
+mysetup = """
+from __main__ import multiply
+import random"""
+
+mycode = """
+n = random.randint(1, 10**4)
+multiply(n)"""
+
+times = timeit.repeat(setup = mysetup,
+                      stmt = mycode,
+                      number = 100,
+                      repeat = 3)
+
+print("Average search time:", sum(times) / len(times))
+```
+
+The crucial trick is the use of `from __main__ import multiply`.
+Here `__main__` refers to the Python file that is being run from the Python shell.
+So if you save the code above in a file called `measure_example.py` and run it with `python3 -i measure_example.py`, then `__main__` refers to that very file.
+Python then will look at that code and import the `multiply` function that is defined in `measure_example.py`.
+Once multiply has been imported in the setup code for `timeit`, it can be called as any other defined function in the test code.
+
+Of course this is even more elegant when the functions to be tested are in different files, as is the case for linear search and binary search.
+That is exactly the case for linear search and binary search.
+So `test.py` could be revised to contain this more elaborate piece of code.
+I leave it up to you to decide whether this code is more readable, though.
+
+```python
+import timeit
+
+# define a general measurement function
+def measure_time(search_function="linear_search",
+                 list_length=10,
+                 number=1, repeat=10):
+    # we use {} placeholders to insert search_function
+    # and list_length into the strings
+    mysetup = """
+from linear_search import linear_search
+from binary_search import binary_search
+import random
+search_item = random.randint(0, 10000)
+search_list = [random.randint(0, 100000) for _ in range({})]
+""".format(list_length)
+    mycode = """{}(search_list, search_item)""".format(search_function)
+    return timeit.repeat(setup = mysetup,
+                         stmt = mycode,
+                         number = number,
+                         repeat = repeat)
+
+
+for length in [10**n for n in range(7)]:
+    print("-----", length, "-----")
+    for search in ("linear_search", "binary_search"):
+        times = measure_time(search_function=search,
+                             list_length=length)
+        print(search, sum(times) / len(times))
+```
