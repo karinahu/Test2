@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-#from hypothesis import given, settings
-#import hypothesis.strategies as st
+from hypothesis import given, settings
+import hypothesis.strategies as st
+
+
 
 
 def binary_search(search_list, item,pos=0):
@@ -22,12 +24,12 @@ def binary_search(search_list, item,pos=0):
         
     Returns
     -------
-    True or False
+    int or False
 
     Examples
     --------
     >>> binary_search(['a','c','e','h','s'],'e',pos=0)
-    True
+    3
     >>> binary_search(['a','c','e','h','s'],'d',pos=0)
     False
     """
@@ -39,13 +41,16 @@ def binary_search(search_list, item,pos=0):
     mid=len(search_list)//2
 
     if search_list[mid]==item:
-        return True
+        return mid+pos
     
     elif search_list[mid]>item:
-        return binary_search(search_list[:mid],item,pos=0)
+        
+        return binary_search(search_list[:mid],item,pos)
+
 
     else:
-        return binary_search(search_list[mid+1:],item,pos=0)
+        pos=pos+(len(search_list)//2)+1
+        return binary_search(search_list[mid+1:],item,pos)
 
     return False
     
@@ -53,7 +58,7 @@ def binary_search(search_list, item,pos=0):
  
             
 
-'''# code for unit testing
+# code for unit testing
 # first we define our variables:
 # - search_list is a random list of integers
 # - item is a random integer
@@ -66,10 +71,11 @@ def test_binary_search(search_list, item):
     # if search_list contains item,
     # verify that binary_search returns the position
     # where the item is in search_list
+    search_list=sorted(search_list)
     if item in search_list:
         pos = binary_search(search_list, item)
         assert search_list[pos] == item
     # if item is not in search_list,
     # binary_search should return False
     else:
-        assert binary_search(search_list, item) is False'''
+        assert binary_search(search_list, item) is False
